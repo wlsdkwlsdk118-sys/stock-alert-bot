@@ -3,6 +3,7 @@ name: Stock Alert Bot
 on:
   schedule:
     - cron: '50 22 * * 1-5'
+    - cron: '10 6 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -20,9 +21,17 @@ jobs:
       - name: Install packages
         run: pip install requests
 
+      - name: Set MODE
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "06" ]; then
+            echo "MODE=afternoon" >> $GITHUB_ENV
+          else
+            echo "MODE=morning" >> $GITHUB_ENV
+          fi
+
       - name: Run stock alert
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-        run: python stock_alert.py
-
+          
