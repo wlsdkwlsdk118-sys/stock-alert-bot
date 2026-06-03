@@ -12,13 +12,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
       - name: Install packages
         run: pip install requests
-      - name: Set MODE
-        run: |
-          HOUR=$(date -u +%H)
-          if [ "$HOUR" =
+
+      - name: Run stock alert
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          MODE: morning
+        run: python stock_alert.py
